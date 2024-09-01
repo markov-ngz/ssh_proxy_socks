@@ -1,0 +1,39 @@
+---
+- name: Add User and authorize a public key
+  become: yes
+  hosts : 
+    - public
+  roles : 
+    - add_proxy_user
+  vars : 
+    user_name: <custom_user>
+    user_public_key : <public_key_path>
+
+- name: Initiate SSH Proxy Sock process
+  hosts: private
+  tasks:
+  - name: check out a git repository
+    shell: ssh -D 8080 -C -N -f  <custom_user>@10.0.1.4 -o CheckHostIP=no -o StrictHostKeyChecking=no
+
+- name: Update APT for private instance
+  become: yes
+  hosts : private
+  roles : 
+    - update_apt
+  vars : 
+    user_name: <ssh_user_connection>
+    user_public_key : <public_key_path>
+    public_server_private_ip: '10.0.1.4'
+
+- name: Kill SSH Proxy Sock process
+  shell : | 
+    for pid in `ps -aux | grep 'ssh -D' | awk '{print $2}'`
+    do
+      kill $pid
+      break
+    done
+
+# Note : 
+# An error occured where :
+# if the proxy sock ssh manipulation was done inside the update_apt role, the agent did not follow along
+# => it had to to be done at the playbook level ... 

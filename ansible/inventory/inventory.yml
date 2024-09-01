@@ -1,0 +1,15 @@
+
+all:
+  children:
+    ssh_proxy_socks:
+      children:
+        public:
+          hosts:
+            public_1:
+              ansible_host: public_1
+              ansible_user: ubuntu
+        private:
+          hosts:
+            private_1:
+              ansible_host: private_1
+
