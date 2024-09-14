@@ -12,7 +12,7 @@
 - name: Initiate SSH Proxy Sock process
   hosts: private
   tasks:
-  - name: check out a git repository
+  - name: Initiate dynamic proxy sock 
     shell: ssh -D 8080 -C -N -f  <custom_user>@10.0.1.4 -o CheckHostIP=no -o StrictHostKeyChecking=no
 
 - name: Update APT for private instance
